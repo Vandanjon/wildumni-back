@@ -13,18 +13,18 @@ class SessionFixtures extends Fixture
     {
         $sesRemFr = new Session();
         $sesRemFr->setLocation("Remote FR");
-        $sesRemFr->setStartDate(new DateTime("01/03/2022"));
-        $sesRemFr->setEndDate(new DateTime("30/07/2022"));
+        $sesRemFr->setStartDate(new DateTime("2022/03/01"));
+        $sesRemFr->setEndDate(new DateTime("2022/07/30"));
 
         $sesRemEn = new Session();
         $sesRemEn->setLocation("Remote EN");
-        $sesRemEn->setStartDate(new DateTime("01/03/2022"));
-        $sesRemEn->setEndDate(new DateTime("30/07/2022"));
+        $sesRemEn->setStartDate(new DateTime("2022/03/01"));
+        $sesRemEn->setEndDate(new DateTime("2022/07/30"));
 
         $sesBiarritz = new Session();
         $sesBiarritz->setLocation("Biarritz");
-        $sesBiarritz->setStartDate(new DateTime("01/03/2022"));
-        $sesBiarritz->setEndDate(new DateTime("30/07/2022"));
+        $sesBiarritz->setStartDate(new DateTime("2022/03/01"));
+        $sesBiarritz->setEndDate(new DateTime("2022/07/30"));
 
         
         $manager->persist($sesRemFr);
