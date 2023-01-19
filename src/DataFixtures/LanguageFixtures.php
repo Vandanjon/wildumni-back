@@ -21,6 +21,13 @@ class LanguageFixtures extends Fixture
         $manager->persist($language1);
         $manager->persist($language2);
         $manager->persist($language3);
+
+        $this->addReference("language1", $language1);
+        $this->addReference("language2", $language2);
+        $this->addReference("language3", $language3);
+
+
+
         $manager->flush();
     }
 }
