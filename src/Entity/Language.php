@@ -6,6 +6,7 @@ use App\Repository\LanguageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LanguageRepository::class)]
 class Language
@@ -15,7 +16,8 @@ class Language
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("getUsers")]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'language')]
