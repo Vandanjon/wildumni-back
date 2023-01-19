@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Language;
+use App\Entity\Session;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Language>
+ * @extends ServiceEntityRepository<Session>
  *
- * @method Language|null find($id, $lockMode = null, $lockVersion = null)
- * @method Language|null findOneBy(array $criteria, array $orderBy = null)
- * @method Language[]    findAll()
- * @method Language[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Session|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Session|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Session[]    findAll()
+ * @method Session[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class LanguageRepository extends ServiceEntityRepository
+class SessionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Language::class);
+        parent::__construct($registry, Session::class);
     }
 
-    public function save(Language $entity, bool $flush = false): void
+    public function save(Session $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class LanguageRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Language $entity, bool $flush = false): void
+    public function remove(Session $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -39,28 +39,28 @@ class LanguageRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Language[] Returns an array of Language objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('l.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Session[] Returns an array of Session objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('s.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Language
-//    {
-//        return $this->createQueryBuilder('l')
-//            ->andWhere('l.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Session
+    //    {
+    //        return $this->createQueryBuilder('s')
+    //            ->andWhere('s.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }
