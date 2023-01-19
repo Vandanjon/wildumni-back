@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 class Session
@@ -16,16 +17,19 @@ class Session
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("getUsers")]
     private ?string $location = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("getUsers")]
     private ?\DateTimeInterface $startDate = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups("getUsers")]
     private ?\DateTimeInterface $endDate = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'session')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'session', cascade: ["persist", "remove"])]
     private Collection $users;
 
     public function __construct()

@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -22,8 +21,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Groups("getUsers")]
-    #[Assert\NotBlank(message: "You need to setup an email.")]
-    #[Assert\Email(message: "The email {{ value }} is not a valid email.")]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -34,11 +31,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups("getUsers")]
-    #[Assert\NotBlank(message: "You need to setup a password.")]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups("getUsers")]
     private ?string $firstName = null;
 
@@ -50,16 +45,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private ?string $userName = null;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users', cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private Collection $session;
 
-    #[ORM\ManyToMany(targetEntity: Language::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Language::class, inversedBy: 'users', cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private Collection $language;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class, orphanRemoval: true)]
+
+    #[ORM\ManyToOne(inversedBy: 'users', cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
+    private ?Address $address = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class)]
     private Collection $contactLink;
 
     public function __construct()
@@ -219,6 +221,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeLanguage(Language $language): self
     {
         $this->language->removeElement($language);
+
+        return $this;
+    }
+
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }
