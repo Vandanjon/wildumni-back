@@ -4,5 +4,5 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-jwt_auth:
+login:
     path: /login
