@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Language;
 use App\Entity\User;
+use App\Repository\LanguageRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,23 +34,49 @@ class UserController extends AbstractController
     }
 
     #[Route("/users", name: "create", methods: ["POST"])]
-    public function create(Request $request, SerializerInterface $serializer, UserRepository $userRepository, UrlGeneratorInterface $urlGenerator, UserPasswordHasherInterface $hasher): Response
-    {
+    public function create(
+        Request $request,
+        SerializerInterface $serializer,
+        UserRepository $userRepository,
+        UrlGeneratorInterface $urlGenerator,
+        UserPasswordHasherInterface $hasher,
+        LanguageRepository $languageRepository
+    ): Response {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-
-        dd($user);
-
-        $password = $hasher->hashPassword($user, $user->getPassword());
-        $user->setPassword($password);
-
-        $userRepository->save($user, true);
-
-        $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
+        $data = json_decode($request->getContent(), true);
 
 
-        $location = $urlGenerator->generate('getOne', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
+        $languages = $data['language'] ?? null;
+        // $objLanguages = new Language();
+
+        // $objLanguages = array_map(function ($language) {
+        //     return ['name' => $language];
+        // }, $languages);
+
+
+        foreach ($languages as $languageName) {
+            $language = $languageRepository->findOneBy(["name" => $languageName]);
+            $user->addLanguage($language);
+        }
+
+
+        // $user->addLanguage(array_map(fn ($language) => new Language($language), $languages));
+
+        // $user->addLanguage($objLanguages);
+        // return new JsonResponse($thisuser, Response::HTTP_OK, [], true);
+        return $this->json(data: $user, context: ["groups" => "getUsers"]);
+        // $password = $hasher->hashPassword($user, $user->getPassword());
+        // $user->setPassword($password);
+
+        // $userRepository->save($user, true);
+
+        // $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
+
+
+        // $location = $urlGenerator->generate('getOne', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        // return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
 

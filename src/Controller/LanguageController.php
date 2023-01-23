@@ -12,7 +12,6 @@ class LanguageController extends AbstractController
     #[Route('/language', name: 'language', methods: ["GET"])]
     public function index(LanguageRepository $languageRepository): JsonResponse
     {
-
         $languages = $languageRepository->findAll();
         return $this->json(data: $languages, context: ["groups" => "getLanguages"]);
     }
