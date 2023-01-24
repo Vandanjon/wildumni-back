@@ -41,15 +41,15 @@ class Address
     #[Groups("getUsers")]
     private ?int $streetNumber = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 8)]
+    #[ORM\Column()]
     #[Groups("getUsers")]
-    private ?string $latitude = null;
+    private ?float $latitude = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 8)]
+    #[ORM\Column()]
     #[Groups("getUsers")]
-    private ?string $longitude = null;
+    private ?float $longitude = null;
 
-    #[ORM\OneToMany(mappedBy: 'address', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'address', targetEntity: User::class, cascade: ["persist", "remove"])]
     private Collection $users;
 
 
@@ -123,24 +123,24 @@ class Address
         return $this;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
-    public function setLatitude(?string $latitude): self
+    public function setLatitude(?float $latitude): self
     {
         $this->latitude = $latitude;
 
         return $this;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function setLongitude(?string $longitude): self
+    public function setLongitude(?float $longitude): self
     {
         $this->longitude = $longitude;
 

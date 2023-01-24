@@ -36,7 +36,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $user->addContactLink($this->getReference("linkSet1"));
 
         $admin = new User();
-        $admin->setEmail($faker->email());
+        $admin->setEmail("toto@tata.com");
         $admin->setRoles(["ROLE_ADMIN"]);
         $password = $this->hasher->hashPassword($admin, "password");
         $admin->setPassword($password);
