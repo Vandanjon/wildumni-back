@@ -41,13 +41,33 @@ class UserController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         UserPasswordHasherInterface $hasher,
         LanguageRepository $languageRepository
-    ): Response {
+    ): JsonResponse {
+
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-        $data = json_decode($request->getContent(), true);
+
+        $password = $hasher->hashPassword($user, $user->getPassword());
+        $user->setPassword($password);
+
+        $userRepository->save($user, true);
+
+        $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
+
+
+        $location = $urlGenerator->generate('getOne', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
+
+        // $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        // $data = json_decode($request->getContent(), true);
 
 
 
-        $languages = $data['language'] ?? null;
+        // $languages = $data['language'] ?? null;
+        // foreach ($languages as $languageName) {
+        //     $language = $languageRepository->findOneBy(["name" => $languageName]);
+        //     $user->addLanguage($language);
+        // }
+
         // $objLanguages = new Language();
 
         // $objLanguages = array_map(function ($language) {
@@ -55,17 +75,13 @@ class UserController extends AbstractController
         // }, $languages);
 
 
-        foreach ($languages as $languageName) {
-            $language = $languageRepository->findOneBy(["name" => $languageName]);
-            $user->addLanguage($language);
-        }
 
 
         // $user->addLanguage(array_map(fn ($language) => new Language($language), $languages));
 
         // $user->addLanguage($objLanguages);
         // return new JsonResponse($thisuser, Response::HTTP_OK, [], true);
-        return $this->json(data: $user, context: ["groups" => "getUsers"]);
+        // return $this->json(data: $user, context: ["groups" => "getUsers"]);
         // $password = $hasher->hashPassword($user, $user->getPassword());
         // $user->setPassword($password);
 
