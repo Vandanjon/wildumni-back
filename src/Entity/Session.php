@@ -15,21 +15,23 @@ class Session
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getSessions"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups("getUsers")]
+    #[Groups(["getUsers", "getSessions"])]
     private ?string $location = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Groups("getUsers")]
+    #[Groups(["getUsers", "getSessions"])]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Groups("getUsers")]
+    #[Groups(["getUsers", "getSessions"])]
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'session', cascade: ["persist", "remove"])]
+    #[Groups(["getSessions"])]
     private Collection $users;
 
     public function __construct()

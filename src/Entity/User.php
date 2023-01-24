@@ -6,11 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+// #[UniqueEntity("address")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -55,13 +58,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private Collection $language;
 
-
     #[ORM\ManyToOne(inversedBy: 'users', cascade: ["persist", "remove"])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, unique: true)]
     #[Groups("getUsers")]
     private ?Address $address = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class, cascade: ["persist", "remove"])]
     private Collection $contactLink;
 
     public function __construct()

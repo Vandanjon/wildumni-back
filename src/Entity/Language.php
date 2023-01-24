@@ -17,7 +17,7 @@ class Language
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers", "getLanguages"])]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'language')]
