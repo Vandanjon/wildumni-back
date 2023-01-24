@@ -61,8 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private ?Address $address = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class, cascade: ["persist", "remove"])]
-    #[Groups("getUsers")]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class)]
     private Collection $contactLink;
 
     public function __construct()
