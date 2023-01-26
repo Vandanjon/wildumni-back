@@ -8,6 +8,7 @@ use App\Entity\Language;
 use App\Repository\UserRepository;
 use App\Repository\AddressRepository;
 use App\Repository\LanguageRepository;
+use App\Repository\SessionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,7 +44,8 @@ class UserController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         UserPasswordHasherInterface $hasher,
         LanguageRepository $languageRepository,
-        AddressRepository $addressRepository
+        AddressRepository $addressRepository,
+        SessionRepository $sessionRepository
     ): JsonResponse {
 
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
@@ -51,25 +53,30 @@ class UserController extends AbstractController
         $password = $hasher->hashPassword($user, $user->getPassword());
         $user->setPassword($password);
 
+
+        $address = $addressRepository->findBy(["latitude" => $user->getAddress()->getLatitude(), "longitude" => $user->getAddress()->getLongitude()]);
+
+        if ($address) {
+            $user->setAddress($address[0]);
+        } else {
+            $addressRepository->save($user->getAddress(), true);
+        }
+
+        // dd($user);
+
+        $session = $sessionRepository->findBy(["location" => $user->getSession()[0]->getLocation()]);
+
+        // dd($session);
+
+        if ($session) {
+            $user->addSession($session[0]);
+        }
+
         $userRepository->save($user, true);
+        dd($user);
+
 
         $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
-
-        $address = $addressRepository->findOneBy(["latitude" => $request->get("latitude"), "longitude" => $request->get("longitude")]);
-        // dd($address);
-        if ($address) {
-            $user->setAddress($address);
-        } else {
-            $address = new Address();
-            $address->setCountry($request->get("country"));
-            $address->setRegion($request->get("region"));
-            $address->setPostcode($request->get("postcode"));
-            $address->setCity($request->get("city"));
-            $address->setStreet($request->get("street"));
-            $address->setStreetNumber($request->get("streetNumber"));
-            $address->setLatitude($request->get("latitude"));
-            $address->setLongitude($request->get("longitude"));
-        }
 
         $location = $urlGenerator->generate('getOne', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 

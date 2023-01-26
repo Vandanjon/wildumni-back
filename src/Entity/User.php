@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private ?string $userName = null;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users', cascade: ["persist", "remove"])]
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private Collection $session;
