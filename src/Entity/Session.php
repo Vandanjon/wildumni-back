@@ -15,7 +15,7 @@ class Session
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getSessions"])]
+    #[Groups(["getUsers", "getSessions"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -31,7 +31,6 @@ class Session
     private ?\DateTimeInterface $endDate = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'session', cascade: ["persist", "remove"])]
-    #[Groups(["getSessions"])]
     private Collection $users;
 
     public function __construct()
