@@ -38,43 +38,51 @@ class UserController extends AbstractController
 
     #[Route("/users", name: "create", methods: ["POST"])]
     public function create(
-        Request $request,
-        SerializerInterface $serializer,
-        UserRepository $userRepository,
-        UrlGeneratorInterface $urlGenerator,
+        Request                     $request,
+        SerializerInterface         $serializer,
+        UserRepository              $userRepository,
+        UrlGeneratorInterface       $urlGenerator,
         UserPasswordHasherInterface $hasher,
-        LanguageRepository $languageRepository,
-        AddressRepository $addressRepository,
-        SessionRepository $sessionRepository
+        LanguageRepository          $languageRepository,
+        AddressRepository           $addressRepository,
+        SessionRepository           $sessionRepository
     ): JsonResponse {
-
+        /** @var User $user */
         $user = $serializer->deserialize($request->getContent(), User::class, 'json');
-
         $password = $hasher->hashPassword($user, $user->getPassword());
         $user->setPassword($password);
 
+        $latitude = $user->getAddress()->getLatitude();
+        $longitude = $user->getAddress()->getLongitude();
+        $address = $addressRepository->findOneBy(["latitude" => $latitude, "longitude" => $longitude]);
 
-        $address = $addressRepository->findBy(["latitude" => $user->getAddress()->getLatitude(), "longitude" => $user->getAddress()->getLongitude()]);
+        if (!$address) {
+            $address = new Address();
+            $address
+                ->setLatitude($latitude)
+                ->setLongitude($longitude);
+            $addressRepository->save($address, true);
+        }
+        $user->setAddress($address);
 
-        if ($address) {
-            $user->setAddress($address[0]);
-        } else {
-            $addressRepository->save($user->getAddress(), true);
+        $user->initCollections();
+        $sessions = json_decode($request->getContent())->session;
+        foreach ($sessions as $sessionObj) {
+            $session = $sessionRepository->findOneBy(["location" => $sessionObj->location]);
+            if ($session) {
+                $user->addSession($session);
+            }
         }
 
-        // dd($user);
-
-        $session = $sessionRepository->findBy(["location" => $user->getSession()[0]->getLocation()]);
-
-        // dd($session);
-
-        if ($session) {
-            $user->addSession($session[0]);
+        $languages = json_decode($request->getContent())->language;
+        foreach ($languages as $languageObj) {
+            $language = $languageRepository->findOneBy(['name' => $languageObj->name]);
+            if ($language) {
+                $user->addLanguage($language);
+            }
         }
 
         $userRepository->save($user, true);
-        dd($user);
-
 
         $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
 
@@ -84,7 +92,6 @@ class UserController extends AbstractController
 
         // $user = $serializer->deserialize($request->getContent(), User::class, 'json');
         // $data = json_decode($request->getContent(), true);
-
 
 
         // $languages = $data['language'] ?? null;
@@ -98,8 +105,6 @@ class UserController extends AbstractController
         // $objLanguages = array_map(function ($language) {
         //     return ['name' => $language];
         // }, $languages);
-
-
 
 
         // $user->addLanguage(array_map(fn ($language) => new Language($language), $languages));

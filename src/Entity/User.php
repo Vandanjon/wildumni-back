@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private ?string $userName = null;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users', cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private Collection $session;
@@ -67,6 +67,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $contactLink;
 
     public function __construct()
+    {
+        $this->initCollections();
+    }
+
+    public function initCollections(): void
     {
         $this->session = new ArrayCollection();
         $this->language = new ArrayCollection();
