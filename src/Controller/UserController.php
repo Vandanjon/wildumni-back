@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Address;
+use App\Entity\ContactLink;
 use App\Repository\UserRepository;
 use App\Repository\AddressRepository;
 use App\Repository\SessionRepository;
@@ -64,6 +65,12 @@ class UserController extends AbstractController
         if (!$address) {
             $address = new Address();
             $address
+                ->setCountry($user->getAddress()->getCountry())
+                ->setRegion($user->getAddress()->getRegion())
+                ->setCity($user->getAddress()->getCity())
+                ->setPostcode($user->getAddress()->getPostcode())
+                ->setStreet($user->getAddress()->getStreet())
+                ->setStreetNumber($user->getAddress()->getStreetNumber())
                 ->setLatitude($latitude)
                 ->setLongitude($longitude);
             $addressRepository->save($address, true);
@@ -82,12 +89,24 @@ class UserController extends AbstractController
         }
 
         $languages = json_decode($request->getContent())->language;
+
         foreach ($languages as $languageObj) {
             $language = $languageRepository->findOneBy(['name' => $languageObj->name]);
             if ($language) {
                 $user->addLanguage($language);
             }
         }
+
+        $contactLinks = json_decode($request->getContent())->contactLink;
+
+        $contactArray = new ContactLink();
+        $contactArray->setGithub($contactLinks[0]->github);
+        $contactArray->setGitlab($contactLinks[0]->gitlab);
+        $contactArray->setBitbucket($contactLinks[0]->bitbucket);
+        $contactArray->setTwitter($contactLinks[0]->twitter);
+        $contactArray->setLinkedin($contactLinks[0]->linkedin);
+
+        $user->addContactLink($contactArray);
 
         $userRepository->save($user, true);
 
