@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraint as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 // #[UniqueEntity("address")]
@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $language;
 
     #[ORM\ManyToOne(inversedBy: 'users', cascade: ["persist", "remove"])]
-    #[ORM\JoinColumn(nullable: true, unique: true)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private ?Address $address = null;
 
