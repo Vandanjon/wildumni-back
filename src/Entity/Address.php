@@ -49,7 +49,7 @@ class Address
     #[Groups("getUsers")]
     private ?float $longitude = null;
 
-    #[ORM\OneToMany(mappedBy: 'address', targetEntity: User::class)]
+    #[ORM\OneToMany(mappedBy: 'address', targetEntity: User::class, cascade: ["remove"])]
     private Collection $users;
 
 

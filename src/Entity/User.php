@@ -58,7 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private Collection $language;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\ManyToOne(inversedBy: 'users', cascade: ["persist"])]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private ?Address $address = null;
