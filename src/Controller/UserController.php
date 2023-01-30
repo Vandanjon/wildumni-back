@@ -139,6 +139,7 @@ class UserController extends AbstractController
         User            $user,
         UserRepository  $userRepository
     ): JsonResponse {
+
         $userRepository->remove($user, true);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);

@@ -30,7 +30,8 @@ class Session
     #[Groups(["getUsers", "getSessions"])]
     private ?\DateTimeInterface $endDate = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'session', cascade: ["persist", "remove"])]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'session', orphanRemoval: true, cascade: ["remove"])]
+    // #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", onDelete: "cascade")]
     private Collection $users;
 
     public function __construct()
