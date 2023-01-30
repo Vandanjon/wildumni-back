@@ -34,8 +34,7 @@ class ContactLink
     #[Groups("getUsers")]
     private ?string $linkedin = null;
 
-    #[ORM\ManyToOne(inversedBy: 'contactLink', cascade: ["persist", "remove"])]
-    #[Groups("getUsers")]
+    #[ORM\ManyToOne(inversedBy: 'contactLink')]
     private ?User $user = null;
 
     public function getId(): ?int

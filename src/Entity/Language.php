@@ -21,7 +21,8 @@ class Language
     #[Groups(["getUsers", "getLanguages"])]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'language')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'language', orphanRemoval: true, cascade: ["remove"])]
+    // #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", onDelete: "cascade")]
     // #[Groups(["getLanguages"])]
     private Collection $users;
 

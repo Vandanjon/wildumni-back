@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraint as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 // #[UniqueEntity("address")]
@@ -48,22 +48,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups("getUsers")]
     private ?string $userName = null;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users', cascade: ["persist", "remove"])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     #[Groups("getUsers")]
     private Collection $session;
 
-    #[ORM\ManyToMany(targetEntity: Language::class, inversedBy: 'users', cascade: ["persist", "remove"])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToMany(targetEntity: Language::class, inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     #[Groups("getUsers")]
     private Collection $language;
 
-    #[ORM\ManyToOne(inversedBy: 'users', cascade: ["persist", "remove"])]
-    #[ORM\JoinColumn(nullable: true, unique: true)]
+    #[ORM\ManyToOne(inversedBy: 'users', cascade: ["persist"])]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups("getUsers")]
     private ?Address $address = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class, cascade: ["persist", "remove"])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ContactLink::class, cascade: ["persist"], orphanRemoval: true)]
+    #[Groups("getUsers")]
     private Collection $contactLink;
 
     public function __construct()
