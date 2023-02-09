@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class LanguageController extends AbstractController
 {
-    #[Route('/languages', name: 'language', methods: ["GET"])]
+    #[Route("/api/languages", name: "language", methods: ["GET"])]
     public function index(LanguageRepository $languageRepository): JsonResponse
     {
         $languages = $languageRepository->findAll();

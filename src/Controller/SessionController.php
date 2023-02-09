@@ -11,13 +11,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SessionController extends AbstractController
 {
-    #[Route('/sessions', name: 'session', methods: ["GET"])]
+    #[Route("/api/sessions", name: "session", methods: ["GET"])]
     public function index(
         SessionRepository $sessionRepository,
         SerializerInterface $serializer
     ): JsonResponse {
-        // $sessions = $sessionRepository->findAll();
-        // return $this->json(data: $sessions, context: ["groups" => "getSessions"]);
 
         $sessions = $serializer->serialize($sessionRepository->findAll(), "json", ["groups" => "getSessions"]);
 

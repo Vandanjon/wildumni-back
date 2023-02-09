@@ -37,10 +37,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-        # - { path: ^/login, roles: PUBLIC_ACCESS }
-        # - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/languages, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/sessions, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/users, roles: ROLE_ADMIN, methods: [PUT, DELETE] }
+        - { path: ^/api, roles: ROLE_USER }
 
 when@test:
     security:

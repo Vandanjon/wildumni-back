@@ -19,9 +19,10 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+#[Route("/api/users")]
 class UserController extends AbstractController
 {
-    #[Route('/users', name: 'app_user', methods: ["GET"])]
+    #[Route("/", name: "app_user", methods: ["GET"])]
     public function index(
         UserRepository      $userRepository,
         SerializerInterface $serializer
@@ -31,7 +32,7 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUsers, Response::HTTP_OK, [], true);
     }
 
-    #[Route("/users/{id}", name: "getOne", methods: ["GET"])]
+    #[Route("/{id}", name: "getOne", methods: ["GET"])]
     public function show(User $user, SerializerInterface $serializer): JsonResponse
     {
         $jsonUser = $serializer->serialize($user, "json", ["groups" => "getUsers"]);
@@ -39,7 +40,7 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
     }
 
-    #[Route("/users", name: "create", methods: ["POST"])]
+    #[Route("/", name: "create", methods: ["POST"])]
     public function create(
         Request                     $request,
         SerializerInterface         $serializer,
@@ -52,7 +53,7 @@ class UserController extends AbstractController
     ): JsonResponse {
 
         /** @var User $user */
-        $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+        $user = $serializer->deserialize($request->getContent(), User::class, "json");
 
         $password = $hasher->hashPassword($user, $user->getPassword());
         $user->setPassword($password);
@@ -90,7 +91,7 @@ class UserController extends AbstractController
         $languages = json_decode($request->getContent())->language;
 
         foreach ($languages as $languageObj) {
-            $language = $languageRepository->findOneBy(['name' => $languageObj->name]);
+            $language = $languageRepository->findOneBy(["name" => $languageObj->name]);
             if ($language) {
                 $user->addLanguage($language);
             }
@@ -109,15 +110,15 @@ class UserController extends AbstractController
 
         $userRepository->save($user, true);
 
-        $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
+        $jsonUser = $serializer->serialize($user, "json", ["groups" => "getUsers"]);
 
-        $location = $urlGenerator->generate('getOne', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $location = $urlGenerator->generate("getOne", ["id" => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
 
-    #[Route("/users/{id}", name: "update", methods: ["PUT"])]
+    #[Route("/{id}", name: "update", methods: ["PUT"])]
     public function update(
         Request                     $request,
         SerializerInterface         $serializer,
@@ -170,7 +171,7 @@ class UserController extends AbstractController
         $languages = json_decode($request->getContent())->language;
 
         foreach ($languages as $languageObj) {
-            $language = $languageRepository->findOneBy(['name' => $languageObj->name]);
+            $language = $languageRepository->findOneBy(["name" => $languageObj->name]);
             if ($language) {
                 $userToUpdate->addLanguage($language);
             }
@@ -189,14 +190,14 @@ class UserController extends AbstractController
 
         $userRepository->save($userToUpdate, true);
 
-        $jsonUser = $serializer->serialize($userToUpdate, 'json', ['groups' => 'getUsers']);
+        $jsonUser = $serializer->serialize($userToUpdate, "json", ["groups" => "getUsers"]);
 
-        $location = $urlGenerator->generate('getOne', ['id' => $userToUpdate->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $location = $urlGenerator->generate("getOne", ["id" => $userToUpdate->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
-    #[Route("/users/{id}", name: "delete", methods: ["DELETE"])]
+    #[Route("/{id}", name: "delete", methods: ["DELETE"])]
     public function delete(
         User            $user,
         UserRepository  $userRepository
